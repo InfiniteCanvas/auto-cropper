@@ -11,7 +11,7 @@ class Object(object):
     pass
 
 
-def autocrop_image(image: Image, border: int = 0):
+def autocrop_image(image: Image, border: (int, int) = (0, 0)):
     """
     :param image: Image to crop
     :param border: Border to add
@@ -24,17 +24,17 @@ def autocrop_image(image: Image, border: int = 0):
     # Determine the width and height of the cropped image
     (width, height) = cropped.size
     # Add border
-    width += border * 2
-    height += border * 2
+    width += border[0] * 2
+    height += border[1] * 2
     # Create a new image object for the output image
     cropped_image = Image.new("RGBA", (width, height), (0, 0, 0, 0))
     # Paste the cropped image onto the new image
-    cropped_image.paste(cropped, (border, border))
+    cropped_image.paste(cropped, (border[0], border[1]))
 
     return cropped_image, (bbox[0], bbox[1])
 
 
-def process_image_file(path: str) -> (Image, [int, int]):
+def process_image_file(path: str, **kwargs) -> (Image, [int, int]):
     """
     :param path: Path to the image file
     :return: Returns the cropped image and coordinates of top-left bounding box
@@ -43,7 +43,7 @@ def process_image_file(path: str) -> (Image, [int, int]):
     original = Image.open(path)
     # Crop image
     result = Object()
-    cropped, pos = autocrop_image(original)
+    cropped, pos = autocrop_image(original, (*kwargs['border_width'], *kwargs['border_height']))
     result.image = cropped
     result.x = pos[0]
     result.y = pos[1]
@@ -59,9 +59,9 @@ def save_image_to_file(image: Image, path: str):
     image.save(path)
 
 
-def save_coordinates_to_file(name: str, x: int, y: int, path: str, format):
+def save_coordinates_to_file(name: str, x: int, y: int, path: str, formatting):
     with open(path, mode='a+') as txt:
-        txt.write(format.format(name=name, x=x, y=y))
+        txt.write(formatting.format(name=name, x=x, y=y))
 
 
 def get_folders_and_images(path: str, extensions=[".jpg", ".png"]):
@@ -94,6 +94,10 @@ def parse_arguments(args) -> dict:
                         help="Set the working directory. Cropped images are put here. Default is script starting directory.")
     parser.add_argument('-e', '--extensions', nargs='*', default=['.jpg', '.png'],
                         help="Choose file extensions to process. Must be images. Defaults are ['.jpg', '.png']")
+    parser.add_argument('-bw', '--border-width', nargs='*', default=0, type=int,
+                        help="Set border width to add to cropping bounding box.")
+    parser.add_argument('-bh', '--border-height', nargs='*', default=0, type=int,
+                        help="Set border height to add to cropping bounding box.")
     parameters = vars(parser.parse_args(args))
 
     return parameters
@@ -143,7 +147,8 @@ if __name__ == '__main__':
 
                 # process image
                 image_file_path = os.path.join(working, folders[0], image_file)
-                cropped_image = process_image_file(image_file_path)
+                cropped_image = process_image_file(image_file_path, **args)
+                # TODO: add group processing of multiple files with greatest common bounding box for different sized idle/hovers
 
                 # save image to file
                 save_file_path = os.path.join(working, "cropped", folders[0], image_file)
