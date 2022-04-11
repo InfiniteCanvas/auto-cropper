@@ -21,15 +21,17 @@ def parse_arguments(args) -> dict:
     parser = argparse.ArgumentParser(prog="Auto Cropper Tool",
                                      description="Processes all files with specified extensions in given image folders.")
     parser.add_argument('-i', '--input', default=sys.path[0], nargs='?', type=get_dir,
-                        help="Set the working directory. Images are loaded from here. Default is script starting directory.")
+                        help="Set the working directory. Images are loaded from here. Defaults to script starting directory.")
     parser.add_argument('-o', '--output', nargs='?', default=sys.path[0], type=str,
-                        help="Set output directory to save cropped images.")
+                        help="Set output directory to save cropped images. Defaults to script starting directory.")
     parser.add_argument('-e', '--extensions', nargs='*', default=['.jpg', '.png'],
                         help="Choose file extensions to process. Must be images. Defaults are ['.jpg', '.png']")
     parser.add_argument('-g', '--group', nargs='?', default=False, type=bool,
                         help="Crop matched images (with '-r pattern') with the same sized box.")
     parser.add_argument('-d', '--difference', nargs='?', default=False, type=bool,
                         help="Get the difference of single and group crop")
+    parser.add_argument('--remove-output', nargs='?', default=False, type=bool,
+                        help="Removes output folder before proceeding.")
     parser.add_argument('-f', '--formatting', nargs='?', default="formatting.json", type=str,
                         help="Path to the formatting JSON file.")
     parser.add_argument('-bw', '--border-width', nargs='*', default=0, type=int,
@@ -45,22 +47,22 @@ def parse_arguments(args) -> dict:
 
 if __name__ == '__main__':
     args = parse_arguments(sys.argv[1:])
-    # args = parse_arguments(['-o', r'output/', '-d', 'True'])
-    shutil.rmtree(Path(args['output']), ignore_errors=True)
+    if args["remove_output"]:
+        shutil.rmtree(Path(args['output']), ignore_errors=True)
     print(
-        f"------------\nNew run in {args['work_dir']}, with output in {args['output']}:")
+        f"------------\nNew run in {args['input']}, with output in {args['output']}:")
 
     extensions = list(map(lambda ext: ext.replace('.', ''), args['extensions']))
 
     images = get_folders_and_images(
-        args['work_dir'], extensions, args['regex_group_by'])
+        args['input'], extensions, args['regex_group_by'])
 
     if args['difference']:
         single_images = get_cropped_paths(
-                images.singles, args['work_dir'], args['output'])
+                images.singles, args['input'], args['output'])
         a = zip(single_images, get_bboxes(load_singles(images.singles)))
         grouped_images = get_grouped_output_paths(
-                images.grouped, args['work_dir'], args['output'])
+                images.grouped, args['input'], args['output'])
         b = zip(grouped_images, get_grouped_bboxes(images.grouped))
         a = set({item[0]:item[1] for item in (a)})
         b = set({item[0]:item[1] for item in (b)})
@@ -76,7 +78,7 @@ if __name__ == '__main__':
         cropped_images = get_cropped_images(grouped_images, bboxes, list(
             itertools.repeat((args['border_width'], args['border_height']), len(bboxes))))
         output_paths = get_grouped_output_paths(
-            images.grouped, args['work_dir'], args['output'])
+            images.grouped, args['input'], args['output'])
         save_images(cropped_images, output_paths)
         substitutions = list(itertools.repeat(get_formatting(args['formatting']), len(bboxes)))
         save_coordinates(output_paths, bboxes, substitutions)
@@ -89,7 +91,7 @@ if __name__ == '__main__':
         cropped_images = get_cropped_images(single_images, bboxes, list(
             itertools.repeat((args['border_width'], args['border_height']), len(bboxes))))
         output_paths = get_cropped_paths(
-            images.singles, args['work_dir'], args['output'])
+            images.singles, args['input'], args['output'])
         save_images(cropped_images, output_paths)
         substitutions = list(itertools.repeat(get_formatting(args['formatting']), len(bboxes)))
         save_coordinates(output_paths, bboxes, substitutions)
