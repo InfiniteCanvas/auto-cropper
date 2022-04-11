@@ -6,7 +6,7 @@ from pathlib import Path
 from collections import namedtuple
 from PIL import Image
 from toolz import functoolz
-from alive_progress import alive_bar, config_handler
+from alive_progress import alive_bar
 
 unwrap = functoolz.compose_left(itertools.chain.from_iterable, list)
 mapl = functoolz.compose_left(map, list)

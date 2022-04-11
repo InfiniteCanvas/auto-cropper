@@ -26,17 +26,17 @@ def parse_arguments(args) -> dict:
                         help="Set output directory to save cropped images. Defaults to script starting directory.")
     parser.add_argument('-e', '--extensions', nargs='*', default=['.jpg', '.png'],
                         help="Choose file extensions to process. Must be images. Defaults are ['.jpg', '.png']")
-    parser.add_argument('-g', '--group', nargs='?', default=False, type=bool,
+    parser.add_argument('-g', '--group', action='store_true', default=False,
                         help="Crop matched images (with '-r pattern') with the same sized box.")
-    parser.add_argument('-d', '--difference', nargs='?', default=False, type=bool,
+    parser.add_argument('-d', '--difference', action='store_true', default=False,
                         help="Get the difference of single and group crop")
-    parser.add_argument('--remove-output', nargs='?', default=False, type=bool,
+    parser.add_argument('--remove-output', action='store_true', default=False,
                         help="Removes output folder before proceeding.")
     parser.add_argument('-f', '--formatting', nargs='?', default="formatting.json", type=str,
                         help="Path to the formatting JSON file.")
-    parser.add_argument('-bw', '--border-width', nargs='*', default=0, type=int,
+    parser.add_argument('-bw', '--border-width', nargs='?', default=0, type=int,
                         help="Set border width to add to cropping bounding box.")
-    parser.add_argument('-bh', '--border-height', nargs='*', default=0, type=int,
+    parser.add_argument('-bh', '--border-height', nargs='?', default=0, type=int,
                         help="Set border height to add to cropping bounding box.")
     parser.add_argument('-r', '--regex-group-by', nargs='?', default="(.+)(_hover|_idle)",
                         help="Regex to use for grouping images by for cropping, uses the first capture group and puts all identicals in the same bucket. Default is '(.+)(_hover|_idle)' to group hover and idle images.")
