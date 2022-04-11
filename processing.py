@@ -172,10 +172,6 @@ def mapl_with_progress(func, *data, **kwargs):
         return mapl(g, *data)
 
 
-def disable_bar():
-    config_handler(disable=True)
-
-
 """ [paths:str] -> [(int,int,int,int)] """
 get_bboxes = functoolz.partial(
     mapl_with_progress, get_bounding_box, title="Getting boundings".ljust(20), bar="filling", dual_line=True)

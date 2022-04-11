@@ -55,8 +55,6 @@ if __name__ == '__main__':
     images = get_folders_and_images(
         args['work_dir'], extensions, args['regex_group_by'])
 
-    disable_bar()
-
     if args['difference']:
         single_images = get_cropped_paths(
                 images.singles, args['work_dir'], args['output'])
