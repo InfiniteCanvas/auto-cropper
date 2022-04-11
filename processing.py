@@ -1,12 +1,13 @@
+import itertools
 import json
 import os
 import re
-import itertools
-from pathlib import Path
 from collections import namedtuple
+from pathlib import Path
+
 from PIL import Image
-from toolz import functoolz
 from alive_progress import alive_bar
+from toolz import functoolz
 
 unwrap = functoolz.compose_left(itertools.chain.from_iterable, list)
 mapl = functoolz.compose_left(map, list)

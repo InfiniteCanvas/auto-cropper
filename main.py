@@ -1,21 +1,23 @@
-import pathlib
+import argparse
+import itertools
 import shutil
 import sys
-import argparse
-from processing import *
+from pathlib import Path
+
+import processing
 
 
 def get_dir(path):
-    path = pathlib.Path(path)
+    path = Path(path)
     if path.is_dir():
         return str(path.absolute())
     else:
         return str(path.parent.absolute())
 
 
-def parse_arguments(args) -> dict:
+def parse_arguments(arguments) -> dict:
     """
-    :param args: Arguments to parse
+    :param arguments: Arguments to parse
     :return: Parsed arguments dictionary
     """
     parser = argparse.ArgumentParser(prog="Auto Cropper Tool",
@@ -40,7 +42,7 @@ def parse_arguments(args) -> dict:
                         help="Set border height to add to cropping bounding box.")
     parser.add_argument('-r', '--regex-group-by', nargs='?', default="(.+)(_hover|_idle)",
                         help="Regex to use for grouping images by for cropping, uses the first capture group and puts all identicals in the same bucket. Default is '(.+)(_hover|_idle)' to group hover and idle images.")
-    parameters = vars(parser.parse_args(args))
+    parameters = vars(parser.parse_args(arguments))
 
     return parameters
 
@@ -54,18 +56,18 @@ if __name__ == '__main__':
 
     extensions = list(map(lambda ext: ext.replace('.', ''), args['extensions']))
 
-    images = get_folders_and_images(
+    images = processing.get_folders_and_images(
         args['input'], extensions, args['regex_group_by'])
 
     if args['difference']:
-        single_images = get_cropped_paths(
-                images.singles, args['input'], args['output'])
-        a = zip(single_images, get_bboxes(load_singles(images.singles)))
-        grouped_images = get_grouped_output_paths(
-                images.grouped, args['input'], args['output'])
-        b = zip(grouped_images, get_grouped_bboxes(images.grouped))
-        a = set({item[0]:item[1] for item in (a)})
-        b = set({item[0]:item[1] for item in (b)})
+        single_images = processing.get_cropped_paths(
+            images.singles, args['input'], args['output'])
+        a = zip(single_images, processing.get_bboxes(processing.load_singles(images.singles)))
+        grouped_images = processing.get_grouped_output_paths(
+            images.grouped, args['input'], args['output'])
+        b = zip(grouped_images, processing.get_grouped_bboxes(images.grouped))
+        a = set({item[0]: item[1] for item in a})
+        b = set({item[0]: item[1] for item in b})
         print("Showing differences:\n")
         print(a - b)
         quit()
@@ -73,25 +75,25 @@ if __name__ == '__main__':
     # process grouped images
     if args['group']:
         print("Processing files by groupings..\n")
-        grouped_images = load_grouped(images.grouped)
-        bboxes = get_grouped_bboxes(images.grouped)
-        cropped_images = get_cropped_images(grouped_images, bboxes, list(
+        grouped_images = processing.load_grouped(images.grouped)
+        bboxes = processing.get_grouped_bboxes(images.grouped)
+        cropped_images = processing.get_cropped_images(grouped_images, bboxes, list(
             itertools.repeat((args['border_width'], args['border_height']), len(bboxes))))
-        output_paths = get_grouped_output_paths(
+        output_paths = processing.get_grouped_output_paths(
             images.grouped, args['input'], args['output'])
-        save_images(cropped_images, output_paths)
-        substitutions = list(itertools.repeat(get_formatting(args['formatting']), len(bboxes)))
-        save_coordinates(output_paths, bboxes, substitutions)
+        processing.save_images(cropped_images, output_paths)
+        substitutions = list(itertools.repeat(processing.get_formatting(args['formatting']), len(bboxes)))
+        processing.save_coordinates(output_paths, bboxes, substitutions)
 
     # process single images
     else:
         print("Processing files by themselves..\n")
-        single_images = load_singles(images.singles)
-        bboxes = get_bboxes(single_images)
-        cropped_images = get_cropped_images(single_images, bboxes, list(
+        single_images = processing.load_singles(images.singles)
+        bboxes = processing.get_bboxes(single_images)
+        cropped_images = processing.get_cropped_images(single_images, bboxes, list(
             itertools.repeat((args['border_width'], args['border_height']), len(bboxes))))
-        output_paths = get_cropped_paths(
+        output_paths = processing.get_cropped_paths(
             images.singles, args['input'], args['output'])
-        save_images(cropped_images, output_paths)
-        substitutions = list(itertools.repeat(get_formatting(args['formatting']), len(bboxes)))
-        save_coordinates(output_paths, bboxes, substitutions)
+        processing.save_images(cropped_images, output_paths)
+        substitutions = list(itertools.repeat(processing.get_formatting(args['formatting']), len(bboxes)))
+        processing.save_coordinates(output_paths, bboxes, substitutions)
