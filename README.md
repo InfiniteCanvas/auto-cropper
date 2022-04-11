@@ -34,7 +34,7 @@ afternoon_icon.png 15,15
 daytime_icon.png 16,15
 evening_icon.png 16,14
 ```
-for .png files that don't match the other patterns.<br>
+For things that don't match anything at all, formatting falls back to ``"{name} {x},{y},{bx},{by}"``
 Matching happens from top to bottom and files are loaded in alphanumerically sorted.
 
 usage: <br>
