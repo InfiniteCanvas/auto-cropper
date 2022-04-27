@@ -32,6 +32,8 @@ def parse_arguments(arguments) -> dict:
                         help="Crop matched images (with '-r pattern') with the same sized box.")
     parser.add_argument('-d', '--difference', action='store_true', default=False,
                         help="Get the difference of single and group crop")
+    parser.add_argument('-mp', '--match-path', action='store_true', default=False,
+                        help="Matches with path instead of name when matching against formatting rules.")
     parser.add_argument('--remove-output', action='store_true', default=False,
                         help="Removes output folder before proceeding.")
     parser.add_argument('-f', '--formatting', nargs='?', default="formatting.json", type=str,
@@ -83,7 +85,7 @@ if __name__ == '__main__':
             images.grouped, args['input'], args['output'])
         processing.save_images(cropped_images, output_paths)
         substitutions = list(itertools.repeat(processing.get_formatting(args['formatting']), len(bboxes)))
-        processing.save_coordinates(output_paths, bboxes, substitutions)
+        processing.save_coordinates(output_paths, bboxes, substitutions, args['match_path'])
 
     # process single images
     else:
@@ -96,4 +98,4 @@ if __name__ == '__main__':
             images.singles, args['input'], args['output'])
         processing.save_images(cropped_images, output_paths)
         substitutions = list(itertools.repeat(processing.get_formatting(args['formatting']), len(bboxes)))
-        processing.save_coordinates(output_paths, bboxes, substitutions)
+        processing.save_coordinates(output_paths, bboxes, substitutions, args['match_path'])

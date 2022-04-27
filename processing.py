@@ -49,7 +49,7 @@ def get_formatting(path: str):
     return formatting
 
 
-def save_coordinate(path: Path, bbox, substitutions):
+def save_coordinate(path: Path, bbox, substitutions, match_path=False):
     x, y = bbox[0], bbox[1]
     bx, by = bbox[2], bbox[3]
     name = path.name
@@ -57,7 +57,7 @@ def save_coordinate(path: Path, bbox, substitutions):
         f = "{name} {x},{y},{bx},{by}"
     else:
         # take first matching key
-        key = list(filter(lambda x: re.search(x, name), substitutions.keys()))
+        key = list(filter(lambda k: re.search(k, path if match_path else name), substitutions.keys()))
         f = substitutions[key[0]]
     with open(path.parent.joinpath("screen.rpy"), mode='a+') as screen:
         screen.write(f.format(x=x, y=y, name=name, bx=bx, by=by, path=path.absolute()))
