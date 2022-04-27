@@ -65,7 +65,7 @@ def save_coordinate(path: Path, bbox, substitutions, match_path, output_path):
         key = list(filter(lambda k: re.search(k, pattern), substitutions.keys()))
         f = coalesce(substitutions[key[0]], f)
     with open(path.parent.joinpath("screen.rpy"), mode='a+') as screen:
-        screen.write(f.format(x=x, y=y, name=name, bx=bx, by=by, path=path.absolute(), rel_path=rel_path))
+        screen.write(f.format(x=x, y=y, name=name, bx=bx, by=by, path=path.as_posix(), rel_path=rel_path.as_posix()))
 
 
 def get_absolute_paths(kvp):
