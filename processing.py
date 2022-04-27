@@ -13,6 +13,10 @@ unwrap = functoolz.compose_left(itertools.chain.from_iterable, list)
 mapl = functoolz.compose_left(map, list)
 
 
+def coalesce(*arg):
+    return next((item for item in arg if item is not None), None)
+
+
 def get_folders_and_images(path: str, extensions=["jpg", "png"], group_by: str = "(.+)(_hover|_idle)"):
     grouped_dict = {}
     single_dict = {}
@@ -49,16 +53,16 @@ def get_formatting(path: str):
     return formatting
 
 
-def save_coordinate(path: Path, bbox, substitutions, match_path=False):
+def save_coordinate(path: Path, bbox, substitutions, match_path):
     x, y = bbox[0], bbox[1]
     bx, by = bbox[2], bbox[3]
     name = path.name
-    if not substitutions:
-        f = "{name} {x},{y},{bx},{by}"
-    else:
+    pattern = str(path) if match_path else name
+    f = "{path} {x},{y},{bx},{by}"
+    if substitutions:
         # take first matching key
-        key = list(filter(lambda k: re.search(k, str(path) if match_path else name), substitutions.keys()))
-        f = substitutions[key[0]]
+        key = list(filter(lambda k: re.search(k, pattern), substitutions.keys()))
+        f = coalesce(substitutions[key[0]], f)
     with open(path.parent.joinpath("screen.rpy"), mode='a+') as screen:
         screen.write(f.format(x=x, y=y, name=name, bx=bx, by=by, path=path.absolute()))
 

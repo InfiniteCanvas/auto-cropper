@@ -85,7 +85,7 @@ if __name__ == '__main__':
             images.grouped, args['input'], args['output'])
         processing.save_images(cropped_images, output_paths)
         substitutions = list(itertools.repeat(processing.get_formatting(args['formatting']), len(bboxes)))
-        processing.save_coordinates(output_paths, bboxes, substitutions, itertools.repeat(args['match_path'], len(bboxes)))
+        processing.save_coordinates(output_paths, bboxes, substitutions, list(itertools.repeat(args['match_path'], len(bboxes))))
 
     # process single images
     else:
@@ -98,4 +98,4 @@ if __name__ == '__main__':
             images.singles, args['input'], args['output'])
         processing.save_images(cropped_images, output_paths)
         substitutions = list(itertools.repeat(processing.get_formatting(args['formatting']), len(bboxes)))
-        processing.save_coordinates(output_paths, bboxes, substitutions, itertools.repeat(args['match_path'], len(bboxes)))
+        processing.save_coordinates(output_paths, bboxes, substitutions, list(itertools.repeat(args['match_path'], len(bboxes))))
