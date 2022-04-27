@@ -53,10 +53,11 @@ def get_formatting(path: str):
     return formatting
 
 
-def save_coordinate(path: Path, bbox, substitutions, match_path):
+def save_coordinate(path: Path, bbox, substitutions, match_path, output_path):
     x, y = bbox[0], bbox[1]
     bx, by = bbox[2], bbox[3]
     name = path.name
+    rel_path = path.relative_to(output_path)
     pattern = str(path) if match_path else name
     f = "{path} {x},{y},{bx},{by}"
     if substitutions:
@@ -64,7 +65,7 @@ def save_coordinate(path: Path, bbox, substitutions, match_path):
         key = list(filter(lambda k: re.search(k, pattern), substitutions.keys()))
         f = coalesce(substitutions[key[0]], f)
     with open(path.parent.joinpath("screen.rpy"), mode='a+') as screen:
-        screen.write(f.format(x=x, y=y, name=name, bx=bx, by=by, path=path.absolute()))
+        screen.write(f.format(x=x, y=y, name=name, bx=bx, by=by, path=path.absolute(), rel_path=rel_path))
 
 
 def get_absolute_paths(kvp):
