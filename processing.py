@@ -57,7 +57,7 @@ def save_coordinate(path: Path, bbox, substitutions, match_path=False):
         f = "{name} {x},{y},{bx},{by}"
     else:
         # take first matching key
-        key = list(filter(lambda k: re.search(k, path if match_path else name), substitutions.keys()))
+        key = list(filter(lambda k: re.search(k, str(path) if match_path else name), substitutions.keys()))
         f = substitutions[key[0]]
     with open(path.parent.joinpath("screen.rpy"), mode='a+') as screen:
         screen.write(f.format(x=x, y=y, name=name, bx=bx, by=by, path=path.absolute()))
