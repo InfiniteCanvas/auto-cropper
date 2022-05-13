@@ -39,7 +39,7 @@ daytime_icon.png 16,15
 evening_icon.png 16,14
 ```
 
-For things that don't match anything at all, formatting falls back to ``"{name} {x},{y},{bx},{by}"``.<br>
+For things that don't match anything at all, formatting falls back to ``"{rel_path} {x},{y},{bx},{by}"``.<br>
 Matching happens from top to bottom and files are loaded in alphanumerically sorted.
 
 <br>
