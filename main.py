@@ -32,17 +32,17 @@ def parse_arguments(arguments) -> dict:
                         help="Crop matched images (with '-r pattern') with the same sized box.")
     parser.add_argument('-d', '--difference', action='store_true', default=False,
                         help="Get the difference of single and group crop")
-    parser.add_argument('-mp', '--match-path', action='store_true', default=False,
-                        help="Matches with path instead of name when matching against formatting rules.")
-    parser.add_argument('--remove-output', action='store_true', default=False,
-                        help="Removes output folder before proceeding.")
+    parser.add_argument('-m', '--match-path', action='store_true', default=False,
+                        help="Matches with path instead of file name when matching against formatting rules.")
     parser.add_argument('-f', '--formatting', nargs='?', default="formatting.json", type=str,
                         help="Path to the formatting JSON file.")
-    parser.add_argument('-bw', '--border-width', nargs='?', default=0, type=int,
+    parser.add_argument('--remove-output', action='store_true', default=False,
+                        help="Removes output folder before proceeding.")
+    parser.add_argument('--border-width', nargs='?', default=0, type=int,
                         help="Set border width to add to cropping bounding box.")
-    parser.add_argument('-bh', '--border-height', nargs='?', default=0, type=int,
+    parser.add_argument('--border-height', nargs='?', default=0, type=int,
                         help="Set border height to add to cropping bounding box.")
-    parser.add_argument('-r', '--regex-group-by', nargs='?', default="(.+)(_hover|_idle)",
+    parser.add_argument('--regex-group-by', nargs='?', default="(.+)(_hover|_idle)",
                         help="Regex to use for grouping images by for cropping, uses the first capture group and puts all identicals in the same bucket. Default is '(.+)(_hover|_idle)' to group hover and idle images.")
     parameters = vars(parser.parse_args(arguments))
 

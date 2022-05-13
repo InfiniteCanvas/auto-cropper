@@ -10,7 +10,8 @@ Define a regex pattern to match against the file to use the formatting for. Avai
 | bx | Bottom right x-coordinate |
 | by | Bottom right y-coordinate |
 | name | File name |
-| path | File path (of the output image) |
+| path | File path of the output image |
+| rel_path | File path relative to output path |
 
 <br>
 
