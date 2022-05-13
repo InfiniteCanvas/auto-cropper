@@ -15,6 +15,10 @@ def get_dir(path):
         return str(path.parent.absolute())
 
 
+def get_repeated_list(element, repeats):
+    return list(itertools.repeat(element, repeats))
+
+
 def parse_arguments(arguments) -> dict:
     """
     :param arguments: Arguments to parse
@@ -24,7 +28,7 @@ def parse_arguments(arguments) -> dict:
                                      description="Processes all files with specified extensions in given image folders.")
     parser.add_argument('-i', '--input', default=sys.path[0], nargs='?', type=get_dir,
                         help="Set the working directory. Images are loaded from here. Defaults to script starting directory.")
-    parser.add_argument('-o', '--output', nargs='?', default=sys.path[0], type=str,
+    parser.add_argument('-o', '--output', nargs='?', default="output", type=str,
                         help="Set output directory to save cropped images. Defaults to script starting directory.")
     parser.add_argument('-e', '--extensions', nargs='*', default=['.jpg', '.png'],
                         help="Choose file extensions to process. Must be images. Defaults are ['.jpg', '.png']")
@@ -38,6 +42,8 @@ def parse_arguments(arguments) -> dict:
                         help="Path to the formatting JSON file.")
     parser.add_argument('--remove-output', action='store_true', default=False,
                         help="Removes output folder before proceeding.")
+    parser.add_argument('--output-file-name', nargs='?', default="coords.txt", type=str,
+                        help="Name of the file where the cropping's information is saved in each folder.")                        
     parser.add_argument('--border-width', nargs='?', default=0, type=int,
                         help="Set border width to add to cropping bounding box.")
     parser.add_argument('--border-height', nargs='?', default=0, type=int,
@@ -79,23 +85,23 @@ if __name__ == '__main__':
         print("Processing files by groupings..\n")
         grouped_images = processing.load_grouped(images.grouped)
         bboxes = processing.get_grouped_bboxes(images.grouped)
-        cropped_images = processing.get_cropped_images(grouped_images, bboxes, list(
-            itertools.repeat((args['border_width'], args['border_height']), len(bboxes))))
-        output_paths = processing.get_grouped_output_paths(
-            images.grouped, args['input'], args['output'])
+        bblen = len(bboxes)
+        cropped_images = processing.get_cropped_images(grouped_images, bboxes, get_repeated_list((args['border_width'], args['border_height']), bblen))
+        output_paths = processing.get_grouped_output_paths(images.grouped, args['input'], args['output'])
         processing.save_images(cropped_images, output_paths)
-        substitutions = list(itertools.repeat(processing.get_formatting(args['formatting']), len(bboxes)))
-        processing.save_coordinates(output_paths, bboxes, substitutions, list(itertools.repeat(args['match_path'], len(bboxes))), list(itertools.repeat(args['output'], len(bboxes))))
+        substitutions = get_repeated_list(processing.get_formatting(args['formatting']), bblen)
+        processing.save_coordinates(output_paths, bboxes, substitutions, get_repeated_list(args['match_path'], bblen), get_repeated_list(args['output'], bblen))
 
     # process single images
     else:
         print("Processing files by themselves..\n")
         single_images = processing.load_singles(images.singles)
-        bboxes = processing.get_bboxes(single_images)
+        bboxes = processing.get_bboxes(single_images)    
+        bblen = len(bboxes)
         cropped_images = processing.get_cropped_images(single_images, bboxes, list(
-            itertools.repeat((args['border_width'], args['border_height']), len(bboxes))))
+            itertools.repeat((args['border_width'], args['border_height']), bblen)))
         output_paths = processing.get_cropped_paths(
             images.singles, args['input'], args['output'])
         processing.save_images(cropped_images, output_paths)
-        substitutions = list(itertools.repeat(processing.get_formatting(args['formatting']), len(bboxes)))
-        processing.save_coordinates(output_paths, bboxes, substitutions, list(itertools.repeat(args['match_path'], len(bboxes))), list(itertools.repeat(args['output'], len(bboxes))))
+        substitutions = list(itertools.repeat(processing.get_formatting(args['formatting']), bblen))
+        processing.save_coordinates(output_paths, bboxes, substitutions, get_repeated_list(args['match_path'], bblen), get_repeated_list(args['output'], bblen), get_repeated_list(args['output_file_name'], bblen))

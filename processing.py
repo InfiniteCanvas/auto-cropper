@@ -53,18 +53,18 @@ def get_formatting(path: str):
     return formatting
 
 
-def save_coordinate(path: Path, bbox, substitutions, match_path, output_path):
+def save_coordinate(path: Path, bbox, substitutions, match_path, output_path, file_name):
     x, y = bbox[0], bbox[1]
     bx, by = bbox[2], bbox[3]
     name = path.name
     rel_path = path.relative_to(output_path)
     pattern = str(path) if match_path else name
-    f = "{path} {x},{y},{bx},{by}"
+    f = "{rel_path} {x},{y},{bx},{by}"
     if substitutions:
         # take first matching key
         key = list(filter(lambda k: re.search(k, pattern), substitutions.keys()))
         f = coalesce(substitutions[key[0]], f)
-    with open(path.parent.joinpath("screen.rpy"), mode='a+') as screen:
+    with open(path.parent.joinpath(file_name), mode='a+') as screen:
         screen.write(f.format(x=x, y=y, name=name, bx=bx, by=by, path=path.as_posix(), rel_path=rel_path.as_posix()))
 
 
