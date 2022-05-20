@@ -9,6 +9,8 @@ Define a regex pattern to match against the file to use the formatting for. Avai
 | y | Top left y-coordinate |
 | bx | Bottom right x-coordinate |
 | by | Bottom right y-coordinate |
+| size | width x height |
+| area | area in pixels |
 | name | File name |
 | path | File path of the output image |
 | rel_path | File path relative to output path |
