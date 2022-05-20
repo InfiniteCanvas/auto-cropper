@@ -59,13 +59,14 @@ def save_coordinate(path: Path, bbox, substitutions, match_path, output_path, fi
     name = path.name
     rel_path = path.relative_to(output_path)
     pattern = str(path) if match_path else name
+    area = (bx - x) * (by - y)
     f = "{rel_path} {x},{y},{bx},{by}"
     if substitutions:
         # take first matching key
         key = list(filter(lambda k: re.search(k, pattern), substitutions.keys()))
         f = coalesce(substitutions[key[0]], f)
     with open(path.parent.joinpath(file_name), mode='a+') as screen:
-        screen.write(f.format(x=x, y=y, name=name, bx=bx, by=by, path=path.as_posix(), rel_path=rel_path.as_posix()))
+        screen.write(f.format(x=x, y=y, name=name, bx=bx, by=by, path=path.as_posix(), rel_path=rel_path.as_posix(), area=area))
 
 
 def get_absolute_paths(kvp):

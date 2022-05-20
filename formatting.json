@@ -1,5 +1,5 @@
 {
-   ".*_hover":"    imagebutton:\n        hover \"{rel_path}\"\n",
+   ".*_hover":"    imagebutton:\n        hover \"{rel_path}\" # xpos {x} ypos {y}\n",
    ".*_idle":"        idle \"{rel_path}\"\n        xpos {x} ypos {y} focus_mask True\n",
    "bg_.*|bg.*":"    add \"{rel_path}\" xpos {x} ypos {y}\n",
    ".png":"{name} {x},{y}\n"
