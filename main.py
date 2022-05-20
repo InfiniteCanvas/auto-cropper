@@ -90,7 +90,7 @@ if __name__ == '__main__':
         output_paths = processing.get_grouped_output_paths(images.grouped, args['input'], args['output'])
         processing.save_images(cropped_images, output_paths)
         substitutions = get_repeated_list(processing.get_formatting(args['formatting']), bblen)
-        processing.save_coordinates(output_paths, bboxes, substitutions, get_repeated_list(args['match_path'], bblen), get_repeated_list(args['output'], bblen))
+        processing.save_coordinates(output_paths, bboxes, substitutions, get_repeated_list(args['match_path'], bblen), get_repeated_list(args['output'], bblen), get_repeated_list(args['output_file_name'], bblen))
 
     # process single images
     else:
