@@ -61,7 +61,7 @@ options:
   -e [EXTENSIONS ...], --extensions [EXTENSIONS ...]
                         Choose file extensions to process. Must be images. Defaults are ['.jpg', '.png']
   -g, --group           Crop matched images (with '-r pattern') with the same sized box.
-  -d, --difference      Get the difference of single and group crop
+  -d, --difference      Show files with size differences for captured group (defaults between idle/hover images)
   -m, --match-path      Matches with path instead of file name when matching against formatting rules.
   -f [FORMATTING], --formatting [FORMATTING]
                         Path to the formatting JSON file.
@@ -73,7 +73,7 @@ options:
   --border-height [BORDER_HEIGHT]
                         Set border height to add to cropping bounding box.
   --regex-group-by [REGEX_GROUP_BY]
-                        Regex to use for grouping images by for cropping, uses the first capture group and puts all identicals in the same bucket. Default is '(.+)(_hover|_idle)' to group hover and     
+                        Regex to use for grouping images by for cropping, uses the first capture group and puts all identicals in the same bucket. Default is '(.+)(hover|idle)' to group hover and     
                         idle images.
 
 ```                        

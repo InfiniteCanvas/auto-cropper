@@ -53,13 +53,17 @@ def get_formatting(path: str):
     return formatting
 
 
+def get_area(bbox):
+    return (bbox[2] - bbox[0]) * (bbox[3] - bbox[1])
+
+
 def save_coordinate(path: Path, bbox, substitutions, match_path, output_path, file_name):
     x, y = bbox[0], bbox[1]
     bx, by = bbox[2], bbox[3]
     name = path.name
     rel_path = path.relative_to(output_path)
     pattern = str(path) if match_path else name
-    area = (bx - x) * (by - y)
+    area = get_area(bbox)
     size = ((bx -x), (by - y))
     f = "{rel_path} {x},{y},{bx},{by}"
     if substitutions:

@@ -48,7 +48,7 @@ def parse_arguments(arguments) -> dict:
                         help="Set border width to add to cropping bounding box.")
     parser.add_argument('--border-height', nargs='?', default=0, type=int,
                         help="Set border height to add to cropping bounding box.")
-    parser.add_argument('--regex-group-by', nargs='?', default="(.+)(_hover|_idle)",
+    parser.add_argument('--regex-group-by', nargs='?', default="(.+)(hover|idle)",
                         help="Regex to use for grouping images by for cropping, uses the first capture group and puts all identicals in the same bucket. Default is '(.+)(_hover|_idle)' to group hover and idle images.")
     parameters = vars(parser.parse_args(arguments))
 
@@ -74,10 +74,12 @@ if __name__ == '__main__':
         grouped_images = processing.get_grouped_output_paths(
             images.grouped, args['input'], args['output'])
         b = zip(grouped_images, processing.get_grouped_bboxes(images.grouped))
-        a = set({item[0]: item[1] for item in a})
-        b = set({item[0]: item[1] for item in b})
-        print("Showing differences:\n")
-        print(a - b)
+        a = {item[0]: item[1] for item in a}
+        b = {item[0]: item[1] for item in b}
+        c = {key: processing.get_area(a[key]) - processing.get_area(b[key]) for key in a}
+        d = dict(filter(lambda kvp: kvp[1] != 0, c.items()))
+        print("Showing files with size differences:\n")
+        print("\n".join(p.as_posix() for p in d.keys()))
         quit()
 
     # process grouped images
